@@ -132,7 +132,7 @@ import {
 } from "firebase/storage";
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // useHistory を useNavigate に変更
 
 const firebaseConfig = {
   apiKey: "AIzaSyCG99nl_hH_8GvqEpxGmT-Zc6xyVKHJKiI",
@@ -149,7 +149,7 @@ const storage = getStorage(firebaseApp);
 const firestore = getFirestore(firebaseApp);
 
 const ImageUploader = () => {
-  const history = useHistory();
+  const navigate = useNavigate(); // useHistory を useNavigate に変更
 
   const [loading, setLoading] = useState(false);
   const [isUploaded, setUploaded] = useState(false);
@@ -174,7 +174,7 @@ const ImageUploader = () => {
       setUploaded(true);
 
       // アップロードが完了したら元のURLに戻る
-      history.push("https://test-app-9eac0.web.app/");
+      navigate("https://test-app-9eac0.web.app/");
     } catch (error) {
       console.error("Error uploading file:", error);
       setUploaded(false);
@@ -234,5 +234,6 @@ const ImageUploader = () => {
 };
 
 export default ImageUploader;
+
 
 
