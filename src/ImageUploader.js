@@ -132,7 +132,7 @@ import {
 } from "firebase/storage";
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCG99nl_hH_8GvqEpxGmT-Zc6xyVKHJKiI",
@@ -149,11 +149,10 @@ const storage = getStorage(firebaseApp);
 const firestore = getFirestore(firebaseApp);
 
 const ImageUploader = () => {
-  const navigate = useNavigate();
+  const history = useHistory();
 
   const [loading, setLoading] = useState(false);
   const [isUploaded, setUploaded] = useState(false);
-  const [downloadURL, setDownloadURL] = useState(null);
 
   const OnFileUploadToFirebase = async (e) => {
     const file = e.target.files[0];
@@ -164,7 +163,6 @@ const ImageUploader = () => {
       await uploadBytes(storageRef, file);
 
       const url = await getDownloadURL(storageRef);
-      setDownloadURL(url);
 
       await addDoc(collection(firestore, "messages"), {
         name: "User Name",
@@ -174,15 +172,14 @@ const ImageUploader = () => {
       });
 
       setUploaded(true);
+
+      // アップロードが完了したら元のURLに戻る
+      history.push("https://test-app-9eac0.web.app/");
     } catch (error) {
       console.error("Error uploading file:", error);
       setUploaded(false);
     } finally {
       setLoading(false);
-      // アップロードが完了したら自動でリダイレクト
-      if (isUploaded) {
-        window.location.href = 'https://test-app-9eac0.web.app/';
-      }
     }
   };
 
@@ -237,4 +234,5 @@ const ImageUploader = () => {
 };
 
 export default ImageUploader;
+
 
