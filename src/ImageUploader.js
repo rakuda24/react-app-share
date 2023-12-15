@@ -174,9 +174,9 @@ const ImageUploader = () => {
       setUploaded(true);
 
       // アップロードが完了したら指定のURLに遷移
-      navigate("https://test-app-9eac0.web.app/");
+      navigate("/room1.html");
     } catch (error) {
-      console.error("Error uploading file:", error);
+      console.error("ファイルのアップロードエラー:", error);
       setLoading(false);
       setUploaded(false);
     }
