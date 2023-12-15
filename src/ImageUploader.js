@@ -161,7 +161,7 @@ const ImageUploader = () => {
   // Firebase StorageとFirestoreへのファイルアップロードを処理する関数
   const OnFileUploadToFirebase = async (e) => {
     const file = e.target.files[0]; // 選択されたファイルを取得
-    const storageRef = ref(storage, "image/" + file.name); // ストレージの場所への参照を作成
+    const storageRef = ref(storage, "test_image/" + file.name); // ストレージの場所への参照を作成
 
     try {
       // ファイルをFirebase Storageにアップロード
