@@ -1,4 +1,4 @@
-// ImageUploader.js
+// //ImageUploader.js
 
 // import React, { useState } from "react";
 // import { Button } from "@mui/material";
@@ -15,13 +15,13 @@
 // import { useNavigate } from "react-router-dom"; // useHistory を useNavigate に変更
 
 // const firebaseConfig = {
-  // apiKey: "AIzaSyCG99nl_hH_8GvqEpxGmT-Zc6xyVKHJKiI",
-  // authDomain: "test-app-9eac0.firebaseapp.com",
-  // databaseURL: "https://test-app-9eac0-default-rtdb.asia-southeast1.firebasedatabase.app",
-  // projectId: "test-app-9eac0",
-  // storageBucket: "test-app-9eac0.appspot.com",
-  // messagingSenderId: "475645900729",
-  // appId: "1:475645900729:web:b6b025376cf9f1f9c1a868"
+//   apiKey: "AIzaSyCG99nl_hH_8GvqEpxGmT-Zc6xyVKHJKiI",
+//   authDomain: "test-app-9eac0.firebaseapp.com",
+//   databaseURL: "https://test-app-9eac0-default-rtdb.asia-southeast1.firebasedatabase.app",
+//   projectId: "test-app-9eac0",
+//   storageBucket: "test-app-9eac0.appspot.com",
+//   messagingSenderId: "475645900729",
+//   appId: "1:475645900729:web:b6b025376cf9f1f9c1a868"
 // };
 
 // const firebaseApp = initializeApp(firebaseConfig);
@@ -61,9 +61,7 @@
 //     }
 //   };
 
-//   const handleReturnToChat = () => {
-//     navigate("https://test-app-9eac0.web.app/");
-//   };
+  
 
 //   return (
 //     <>
@@ -106,9 +104,9 @@
 //                     onChange={OnFileUploadToFirebase}
 //                   />
 //                 </Button>
-//                 <Button variant="outlined" onClick={handleReturnToChat}>
+//                 {/* <Button variant="outlined" onClick={handleReturnToChat}>
 //                   チャットに戻る
-//                 </Button>
+//                 </Button> */}
 //               </div>
 //             </div>
 //           )}
@@ -120,20 +118,22 @@
 
 // export default ImageUploader;
 
+// 必要な依存関係とスタイルをインポート
 import React, { useState } from "react";
 import { Button } from "@mui/material";
-import ImageLogo from "./image.svg";
-import "./ImageUpload.css";
+import ImageLogo from "./image.svg"; // ロゴのための画像ファイルをインポート
+import "./ImageUpload.css"; // コンポーネントのスタイルをインポート
 import {
   getStorage,
   ref,
   uploadBytes,
   getDownloadURL,
-} from "firebase/storage";
+} from "firebase/storage"; // Firebase Storage関数をインポート
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom"; // useHistory を useNavigate に変更
+import { getFirestore, collection, addDoc } from "firebase/firestore"; // Firebase Firestore関数をインポート
+import { useNavigate } from "react-router-dom"; // React Routerのナビゲーションフックをインポート
 
+// Firebaseの設定オブジェクト。APIキーとプロジェクトの詳細が含まれています。
 const firebaseConfig = {
   apiKey: "AIzaSyCG99nl_hH_8GvqEpxGmT-Zc6xyVKHJKiI",
   authDomain: "test-app-9eac0.firebaseapp.com",
@@ -144,45 +144,54 @@ const firebaseConfig = {
   appId: "1:475645900729:web:b6b025376cf9f1f9c1a868"
 };
 
+// Firebaseアプリを初期化し、Firebase StorageとFirestoreのインスタンスを作成します。
 const firebaseApp = initializeApp(firebaseConfig);
 const storage = getStorage(firebaseApp);
 const firestore = getFirestore(firebaseApp);
 
+// ImageUploaderという名前の関数コンポーネント
 const ImageUploader = () => {
-  const navigate = useNavigate(); // useHistory を useNavigate に変更
+  const navigate = useNavigate(); // React Routerのナビゲーションフック
 
+  // ローディング、アップロードステータス、ダウンロードURLを管理するState変数
   const [loading, setLoading] = useState(false);
   const [isUploaded, setUploaded] = useState(false);
+  const [downloadURL, setDownloadURL] = useState(null);
 
+  // Firebase StorageとFirestoreへのファイルアップロードを処理する関数
   const OnFileUploadToFirebase = async (e) => {
-    const file = e.target.files[0];
-    const storageRef = ref(storage, "image/" + file.name);
+    const file = e.target.files[0]; // 選択されたファイルを取得
+    const storageRef = ref(storage, "image/" + file.name); // ストレージの場所への参照を作成
 
     try {
-      setLoading(true);
+      // ファイルをFirebase Storageにアップロード
       await uploadBytes(storageRef, file);
 
+      // アップロードされたファイルのダウンロードURLを取得
       const url = await getDownloadURL(storageRef);
+      console.log("Download URL:", url);
+      setDownloadURL(url);
 
-      await addDoc(collection(firestore, "messages"), {
+      // Firestoreコレクションに新しいドキュメントを追加（サンプルデータを含む）
+      const docRef = await addDoc(collection(firestore, "messages"), {
         name: "User Name",
         message: url,
         photoURL: "/images/profile_placeholder.png",
         timestamp: new Date(),
       });
 
-      setUploaded(true);
-
-      // アップロードが完了したら元のURLに戻る
-      navigate("https://test-app-9eac0.web.app/");
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      setUploaded(false);
-    } finally {
+      // ローディングをfalseに設定し、アップロードステータスをtrueに更新
       setLoading(false);
+      setUploaded(true);
+    } catch (error) {
+      // アップロードプロセス中のエラーを処理
+      console.error("ファイルのアップロードエラー:", error);
+      setLoading(false);
+      setUploaded(false);
     }
   };
 
+  // 現在のステートに基づいてJSXをレンダリング
   return (
     <>
       {loading ? (
@@ -204,6 +213,7 @@ const ImageUploader = () => {
                   <img src={ImageLogo} alt="imagelogo" />
                   <p>ここにドラッグ＆ドロップしてね</p>
                 </div>
+                {/* ファイル選択のためのInputフィールドとイベントハンドラ */}
                 <input
                   className="imageUploadInput"
                   multiple
@@ -215,6 +225,7 @@ const ImageUploader = () => {
               </div>
               <p>または</p>
               <div className="buttonContainer">
+                {/* 関連付けられたInputフィールドを使用したファイル選択のためのボタン */}
                 <Button variant="contained">
                   ファイルを選択
                   <input
@@ -224,6 +235,10 @@ const ImageUploader = () => {
                     onChange={OnFileUploadToFirebase}
                   />
                 </Button>
+                {/* チャットに戻るための追加のボタン（コメントアウト済み） */}
+                {/* <Button variant="outlined" onClick={handleReturnToChat}>
+                  チャットに戻る
+                </Button> */}
               </div>
             </div>
           )}
@@ -233,6 +248,7 @@ const ImageUploader = () => {
   );
 };
 
+// ImageUploaderコンポーネントをデフォルトエクスポート
 export default ImageUploader;
 
 
