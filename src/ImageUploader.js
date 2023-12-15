@@ -37,7 +37,7 @@ const ImageUploader = () => {
 
   const OnFileUploadToFirebase = async (e) => {
     const file = e.target.files[0];
-    const storageRef = ref(storage, "image/" + file.name);
+    const storageRef = ref(storage, "room1/" + file.name);
 
     try {
       await uploadBytes(storageRef, file);
@@ -45,7 +45,7 @@ const ImageUploader = () => {
       const url = await getDownloadURL(storageRef);
       setDownloadURL(url);
 
-      const docRef = await addDoc(collection(firestore, "messages"), {
+      const docRef = await addDoc(collection(firestore, "messages1"), {
         name: "写真共有",
         message: url,
         photoURL: "/images/profile_placeholder.png",
