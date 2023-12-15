@@ -173,7 +173,7 @@ const ImageUploader = () => {
       setDownloadURL(url);
 
       // Firestoreコレクションに新しいドキュメントを追加（サンプルデータを含む）
-      const docRef = await addDoc(collection(firestore, "messages"), {
+      const docRef = await addDoc(collection(firestore, "messages1"), {
         name: "User Name",
         message: url,
         photoURL: "/images/profile_placeholder.png",
